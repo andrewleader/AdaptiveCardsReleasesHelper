@@ -6,15 +6,13 @@ using System.Threading.Tasks;
 
 namespace AdaptiveCardsReleasesHelper.Model
 {
-    public class FeatureRequest
+    public class FeatureRequest : BaseIssue
     {
-        [JsonProperty(PropertyName = "title")]
-        public string Title { get; set; }
-
         /// <summary>
-        /// The issue number
+        /// The spec that is solving this feature request
         /// </summary>
-        [JsonProperty(PropertyName = "issue_number")]
-        public int IssueNumber { get; set; }
+        public Spec Spec { get; set; }
+
+        public Proposal[] Proposals { get; set; }
     }
 }

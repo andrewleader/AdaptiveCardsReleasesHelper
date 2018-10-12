@@ -17,28 +17,28 @@ namespace AdaptiveCardsReleasesHelper.Controllers
     public class ReleaseFeaturesController : Controller
     {
         [HttpGet]
-        public async Task<ContentResult> Get(bool refreshCard = false)
+        public async Task<ContentResult> Get(bool refreshCard = false, bool refresh = false)
         {
             switch (Request.ContentType)
             {
                 case "application/vnd.microsoft.card.adaptive":
                     return new ContentResult()
                     {
-                        Content = await ReleaseFeaturesToCardHelper.GetCardAsync(refreshCard: refreshCard),
+                        Content = await ReleaseFeaturesToCardHelper.GetCardAsync(refresh: refresh, refreshCard: refreshCard),
                         ContentType = "application/vnd.microsoft.card.adaptive"
                     };
 
                 case "application/json":
                     return new ContentResult()
                     {
-                        Content = JsonConvert.SerializeObject(await ReleaseFeaturesHelper.GetReleasesAsync()),
+                        Content = JsonConvert.SerializeObject(await ReleaseFeaturesHelper.GetReleasesAsync(refresh: refresh)),
                         ContentType = "application/json"
                     };
 
                 default:
                     return new ContentResult()
                     {
-                        Content = "<html><body><pre>" + await ReleaseFeaturesToCardHelper.GetCardAsync(refreshCard: refreshCard) + "</pre></body></html>",
+                        Content = "<html><body><pre>" + await ReleaseFeaturesToCardHelper.GetCardAsync(refresh: refresh, refreshCard: refreshCard) + "</pre></body></html>",
                         ContentType = "text/html"
                     };
             }
