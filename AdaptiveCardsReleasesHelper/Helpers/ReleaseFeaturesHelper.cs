@@ -1,20 +1,21 @@
-﻿using System;
+﻿using AdaptiveCardsReleasesHelper.Model;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
-namespace AdaptiveCardsReleasesHelper.Controllers
+namespace AdaptiveCardsReleasesHelper.Helpers
 {
-    [Produces("application/json")]
-    [Route("api/RefreshReleaseFeatures")]
-    public class RefreshReleaseFeaturesController : Controller
+    public static class ReleaseFeaturesHelper
     {
-        [HttpGet]
-        public async Task<string> Get()
+        public static Task<List<Release>> GetReleasesAsync()
+        {
+            return BlobHelper.GetCachedOrRefresh("releases.json", ActuallyGetReleasesAsync);
+        }
+
+        private static async Task<List<Release>> ActuallyGetReleasesAsync()
         {
             GitHubIssue[] allRequests;
 
@@ -53,7 +54,7 @@ namespace AdaptiveCardsReleasesHelper.Controllers
                     await UpdateReleaseAsync(client, allRequests, release);
                 }
 
-                return JsonConvert.SerializeObject(releases);
+                return releases;
             }
         }
 
@@ -63,14 +64,14 @@ namespace AdaptiveCardsReleasesHelper.Controllers
 
             ReleaseIssue[] issues = JsonConvert.DeserializeObject<ReleaseIssue[]>(await response.Content.ReadAsStringAsync());
 
-            release.Requests = new List<Request>();
+            release.Requests = new List<FeatureRequest>();
 
             foreach (var issue in issues)
             {
                 var req = allRequests.FirstOrDefault(i => i.IssueNumber == issue.IssueNumber);
                 if (req != null)
                 {
-                    release.Requests.Add(new Request()
+                    release.Requests.Add(new FeatureRequest()
                     {
                         Title = TrimStart(req.Title, "Request: "),
                         IssueNumber = req.IssueNumber
@@ -87,46 +88,6 @@ namespace AdaptiveCardsReleasesHelper.Controllers
             }
 
             return str;
-        }
-
-        public class Release : IComparable<Release>
-        {
-            [JsonProperty(PropertyName = "release_id")]
-            public string ReleaseId { get; set; }
-
-            [JsonProperty(PropertyName = "title")]
-            public string Title { get; set; }
-
-            /// <summary>
-            /// Our code generates this
-            /// </summary>
-            [JsonProperty(PropertyName = "requests")]
-            public List<Request> Requests { get; set; }
-
-            public int CompareTo(Release other)
-            {
-                if (Version.TryParse(Title, out Version thisVersion))
-                {
-                    if (Version.TryParse(other.Title, out Version otherVersion))
-                    {
-                        return thisVersion.CompareTo(otherVersion);
-                    }
-                }
-
-                return 0;
-            }
-        }
-
-        public class Request
-        {
-            [JsonProperty(PropertyName = "title")]
-            public string Title { get; set; }
-
-            /// <summary>
-            /// The issue number
-            /// </summary>
-            [JsonProperty(PropertyName = "issue_number")]
-            public int IssueNumber { get; set; }
         }
 
         public class ReleaseIssue

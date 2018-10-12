@@ -14,6 +14,7 @@ namespace AdaptiveCardsReleasesHelper
     public class Startup
     {
         public static string ZENHUB_AUTH_TOKEN;
+        public static string BlobStorageConnectionString;
 
         public Startup(IConfiguration configuration)
         {
@@ -28,6 +29,7 @@ namespace AdaptiveCardsReleasesHelper
             services.AddMvc();
 
             ZENHUB_AUTH_TOKEN = Configuration["ZENHUB_AUTH_TOKEN"];
+            BlobStorageConnectionString = Configuration.GetConnectionString("BlobStorage");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
