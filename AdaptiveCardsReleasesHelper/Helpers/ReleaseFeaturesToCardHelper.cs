@@ -49,5 +49,10 @@ namespace AdaptiveCardsReleasesHelper.Helpers
 
             return card.ToJson();
         }
+
+        public static string GetCardUri()
+        {
+            return BlobHelper.GetUri("releasescard.json");
+        }
     }
 }

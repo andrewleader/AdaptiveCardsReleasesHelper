@@ -77,6 +77,24 @@ namespace AdaptiveCardsReleasesHelper.Helpers
             }
         }
 
+        public static string GetUri(string filename)
+        {
+            // Parse connection string
+            if (CloudStorageAccount.TryParse(Startup.BlobStorageConnectionString, out CloudStorageAccount account))
+            {
+                var client = account.CreateCloudBlobClient();
+
+                var container = client.GetContainerReference("releaseshelper");
+                var blob = container.GetBlobReference(filename);
+
+                return blob.Uri.ToString();
+            }
+            else
+            {
+                throw new Exception("Invalid blob storage connection string");
+            }
+        }
+
         public static async Task<T> GetCachedOrRefresh<T>(string filename, Func<Task<T>> refreshFuncAsync, int cacheDurationInMinutes = 5)
         {
             try

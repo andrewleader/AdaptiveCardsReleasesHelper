@@ -43,5 +43,12 @@ namespace AdaptiveCardsReleasesHelper.Controllers
                     };
             }
         }
+
+        [HttpGet]
+        [Route("carduri")]
+        public string GetCardUri()
+        {
+            return ReleaseFeaturesToCardHelper.GetCardUri();
+        }
     }
 }
