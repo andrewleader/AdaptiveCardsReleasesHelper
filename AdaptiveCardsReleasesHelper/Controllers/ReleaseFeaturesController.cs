@@ -45,6 +45,17 @@ namespace AdaptiveCardsReleasesHelper.Controllers
         }
 
         [HttpGet]
+        [Route("ascard")]
+        public async Task<ContentResult> Get()
+        {
+            return new ContentResult()
+            {
+                Content = await ReleaseFeaturesToCardHelper.GetCardAsync(),
+                ContentType = "application/vnd.microsoft.card.adaptive"
+            };
+        }
+
+        [HttpGet]
         [Route("carduri")]
         public string GetCardUri()
         {
