@@ -19,7 +19,7 @@ namespace AdaptiveCardsReleasesHelper.Controllers
         [HttpGet]
         public async Task<ContentResult> Get(bool refreshCard = false, bool refresh = false)
         {
-            switch (Request.ContentType)
+            switch (Request.Headers["Accept"])
             {
                 case "application/vnd.microsoft.card.adaptive":
                     return new ContentResult()
