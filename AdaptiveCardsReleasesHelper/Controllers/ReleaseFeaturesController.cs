@@ -51,7 +51,7 @@ namespace AdaptiveCardsReleasesHelper.Controllers
             return new ContentResult()
             {
                 Content = await ReleaseFeaturesToCardHelper.GetCardAsync(),
-                ContentType = "application/vnd.microsoft.card.adaptive"
+                ContentType = "application/json"
             };
         }
 

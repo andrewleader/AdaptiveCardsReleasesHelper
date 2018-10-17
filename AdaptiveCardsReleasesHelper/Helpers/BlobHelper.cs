@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace AdaptiveCardsReleasesHelper.Helpers
 {
+    public class OutdatedBlobException : Exception
+    {
+
+    }
+
     public static class BlobHelper
     {
         public static Task SaveObjectAsync(string filename, object obj)
@@ -55,7 +60,7 @@ namespace AdaptiveCardsReleasesHelper.Helpers
 
                 if (blob.Properties.LastModified.Value.AddMinutes(cacheDurationInMinutes) < DateTime.UtcNow)
                 {
-                    throw new Exception("Outdated blob");
+                    throw new OutdatedBlobException();
                 }
 
                 using (var stream = await blob.OpenReadAsync())
